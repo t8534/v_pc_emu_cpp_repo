@@ -1,0 +1,595 @@
+From: <Saved by Windows Internet Explorer 8>
+Subject: Makefile Tutorial
+Date: Wed, 7 Aug 2013 12:33:12 +0200
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----=_NextPart_000_0000_01CE936A.4815D590"
+X-MimeOLE: Produced By Microsoft MimeOLE V6.00.2900.6157
+
+This is a multi-part message in MIME format.
+
+------=_NextPart_000_0000_01CE936A.4815D590
+Content-Type: text/html;
+	charset="windows-1250"
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://mrbook.org/tutorials/make/
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML><HEAD><TITLE>Makefile Tutorial</TITLE>
+<META content=3D"text/html; charset=3Dwindows-1250" =
+http-equiv=3DContent-Type>
+<META name=3DGENERATOR=20
+content=3D"MSHTML 8.00.6001.23507"></HEAD><HEADER><HEAD></HEADER></HEAD>
+<BODY bgColor=3Dwhite>
+<CENTER><!--=0A=
+<script type=3D"text/javascript"><!--=0A=
+google_ad_client =3D "pub-4841519564527775";=0A=
+google_ad_width =3D 728;=0A=
+google_ad_height =3D 90;=0A=
+google_ad_format =3D "728x90_as";=0A=
+google_ad_type =3D "text";=0A=
+google_ad_channel =3D"";=0A=
+=0A=
+</script>=0A=
+<script type=3D"text/javascript"=0A=
+  src=3D"http://pagead2.googlesyndication.com/pagead/show_ads.js">=0A=
+</script>=0A=
+ -->
+<SCRIPT type=3Dtext/javascript>=0A=
+var gaJsHost =3D (("https:" =3D=3D document.location.protocol) ? =
+"https://ssl." : "http://www.");=0A=
+document.write(unescape("%3Cscript src=3D'" + gaJsHost + =
+"google-analytics.com/ga.js' type=3D'text/javascript'%3E%3C/script%3E"));=0A=
+</SCRIPT>
+
+<SCRIPT type=3Dtext/javascript>=0A=
+var pageTracker =3D _gat._getTracker("UA-5318223-1");=0A=
+pageTracker._trackPageview();=0A=
+</SCRIPT>
+
+<H1>Makefiles</H1>
+<H3>by example</H3>
+<HR>
+
+<TABLE>
+  <TBODY>
+  <TR>
+    <TD>
+      <CENTER></CENTER>Compiling your source code files can be tedious,=20
+      specially when you want to include several source files and have =
+to type=20
+      the compiling command everytime you want to do it. <BR>Well, I =
+have news=20
+      for you... Your days of command line compiling are (mostly) over, =
+because=20
+      YOU will learn how to write Makefiles.<BR>Makefiles are special =
+format=20
+      files that together with the <I>make</I> utility will help you to=20
+      automagically build and manage your projects.<BR>
+      <P>For this session you will need these files:<BR>
+      <UL>
+        <LI><A =
+href=3D"http://mrbook.org/tutorials/make/main.cpp">main.cpp</A>=20
+        <LI><A =
+href=3D"http://mrbook.org/tutorials/make/hello.cpp">hello.cpp</A>=20
+        <LI><A=20
+        =
+href=3D"http://mrbook.org/tutorials/make/factorial.cpp">factorial.cpp</A>=
+=20
+        <LI><A=20
+        =
+href=3D"http://mrbook.org/tutorials/make/functions.h">functions.h</A>=20
+      </LI></UL>I recommend creating a new directory and placing all the =
+files=20
+      in there.
+      <P><I>note: I use g++ for compiling. You are free to change it to =
+a=20
+      compiler of your choice</I>=20
+      <H3>The make utility</H3>If you run <PRE>make</PRE>this program =
+will look for a file named <I>makefile</I> in=20
+      your directory, and then execute it.<BR>If you have several =
+makefiles,=20
+      then you can execute them with the command: <PRE>make -f =
+MyMakefile</PRE>There are several other switches to the=20
+      <CODE>make</CODE> utility. For more info, <CODE>man make</CODE>.=20
+      <H3>Build Process</H3>
+      <OL>
+        <LI>Compiler takes the source files and outputs object files=20
+        <LI>Linker takes the object files and creates an executable =
+</LI></OL>
+      <H3>Compiling by hand</H3>The trivial way to compile the files and =
+obtain=20
+      an executable, is by running the command: <PRE>g++ main.cpp =
+hello.cpp factorial.cpp -o hello
+</PRE>
+      <H3>The basic Makefile</H3>The basic makefile is composed of: =
+<PRE><I>
+target: dependencies
+[tab] system command
+</PRE></I>This syntax applied to our example would look like: <PRE>all:
+	g++ main.cpp hello.cpp factorial.cpp -o hello
+</PRE>[Download <A=20
+      href=3D"http://mrbook.org/tutorials/make/Makefile-1">here</A>]
+      <P>To run this makefile on your files, type:<PRE>make -f =
+Makefile-1</PRE>On this first example we see that our target=20
+      is called <I>all</I>. This is the default target for makefiles. =
+The=20
+      <I>make</I> utility will execute this target if no other one is=20
+      specified.<BR>We also see that there are no dependencies for =
+target=20
+      <I>all</I>, so <I>make</I> safely executes the system commands=20
+      specified.<BR>Finally, make compiles the program according to the =
+command=20
+      line we gave it.<BR>
+      <H3>Using dependencies</H3>Sometimes is useful to use different =
+targets.=20
+      This is because if you modify a single file in your project, you =
+don't=20
+      have to recompile everything, only what you modified. <BR>Here is =
+an=20
+      example:<BR><PRE>all: hello
+
+hello: main.o factorial.o hello.o
+	g++ main.o factorial.o hello.o -o hello
+
+main.o: main.cpp
+	g++ -c main.cpp
+
+factorial.o: factorial.cpp
+	g++ -c factorial.cpp
+
+hello.o: hello.cpp
+	g++ -c hello.cpp
+
+clean:
+	rm -rf *o hello
+
+</PRE>[Download <A=20
+      href=3D"http://mrbook.org/tutorials/make/Makefile-2">here</A>]
+      <P>Now we see that the target <I>all</I> has only dependencies, =
+but no=20
+      system commands. In order for <I>make</I> to execute correctly, it =
+has to=20
+      meet all the dependencies of the called target (in this case=20
+      <I>all</I>).<BR>Each of the dependencies are searched through all =
+the=20
+      targets available and executed if found.<BR>In this example we see =
+a=20
+      target called <I>clean</I>. It is useful to have such target if =
+you want=20
+      to have a fast way to get rid of all the object files and =
+executables.<BR>
+      <H3>Using variables and comments</H3>You can also use variables =
+when=20
+      writing Makefiles. It comes in handy in situations where you want =
+to=20
+      change the compiler, or the compiler options. <PRE># I am a =
+comment, and I want to say that the variable CC will be
+# the compiler to use.
+CC=3Dg++
+# Hey!, I am comment number 2. I want to say that CFLAGS will be the
+# options I'll pass to the compiler.
+CFLAGS=3D-c -Wall
+
+all: hello
+
+hello: main.o factorial.o hello.o
+	$(CC) main.o factorial.o hello.o -o hello
+
+main.o: main.cpp
+	$(CC) $(CFLAGS) main.cpp
+
+factorial.o: factorial.cpp
+	$(CC) $(CFLAGS) factorial.cpp
+
+hello.o: hello.cpp
+	$(CC) $(CFLAGS) hello.cpp
+
+clean:
+	rm -rf *o hello
+</PRE>[Download <A=20
+      href=3D"http://mrbook.org/tutorials/make/Makefile-3">here</A>]
+      <P>As you can see, variables can be very useful sometimes. To use =
+them,=20
+      just assign a value to a variable before you start to write your =
+targets.=20
+      After that, you can just use them with the dereference operator =
+$(VAR).=20
+      <BR>
+      <H2>Where to go from here</H2>With this brief introduction to =
+Makefiles,=20
+      you can create some very sophisticated mechanism for compiling =
+your=20
+      projects. However, this is just a tip of the iceberg. I don't =
+expect=20
+      anyone to fully understand the example presented below without =
+having=20
+      consulted some <A=20
+      =
+href=3D"http://www.gnu.org/manual/make-3.79.1/html_node/make_toc.html">Ma=
+ke=20
+      documentation</A> (which I had to do myself) or read pages 347 to =
+354 of=20
+      your Unix book.
+      <P><PRE>CC=3Dg++
+CFLAGS=3D-c -Wall
+LDFLAGS=3D
+SOURCES=3Dmain.cpp hello.cpp factorial.cpp
+OBJECTS=3D$(SOURCES:.cpp=3D.o)
+EXECUTABLE=3Dhello
+
+all: $(SOURCES) $(EXECUTABLE)
+=09
+$(EXECUTABLE): $(OBJECTS)=20
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+
+.cpp.o:
+	$(CC) $(CFLAGS) $&lt; -o $@
+
+
+</PRE>[Download <A=20
+      href=3D"http://mrbook.org/tutorials/make/Makefile-4">here</A>]
+      <P>If you understand this last example, you could adapt it to your =
+own=20
+      personal projects changing only 2 lines, no matter how many =
+additional=20
+      files you have !!!.
+      <P>
+      <HR>
+      Hector Urtubia </TD>
+    <TD vAlign=3Dtop>
+      <SCRIPT type=3Dtext/javascript><!--=0A=
+google_ad_client =3D "pub-4841519564527775";=0A=
+google_ad_width =3D 120;=0A=
+google_ad_height =3D 600;=0A=
+google_ad_format =3D "120x600_as";=0A=
+google_ad_type =3D "text";=0A=
+google_ad_channel =3D"";=0A=
+google_color_border =3D "336699";=0A=
+google_color_bg =3D "FFFFFF";=0A=
+google_color_link =3D "0000FF";=0A=
+google_color_url =3D "008000";=0A=
+google_color_text =3D "000000";=0A=
+//--></SCRIPT>
+
+      <SCRIPT type=3Dtext/javascript=20
+      src=3D"http://pagead2.googlesyndication.com/pagead/show_ads.js">=0A=
+</SCRIPT>
+    </TD></TR></TBODY></TABLE></CENTER></BODY></HTML>
+
+------=_NextPart_000_0000_01CE936A.4815D590
+Content-Type: application/octet-stream
+Content-Transfer-Encoding: quoted-printable
+Content-Location: http://pagead2.googlesyndication.com/pagead/show_ads.js
+
+(function(){var n=3Dthis,aa=3Dfunction(a,b){var =
+e=3Da.split("."),d=3Dn;e[0]in d||!d.execScript||d.execScript("var =
+"+e[0]);for(var c;e.length&&(c=3De.shift());)e.length||void =
+0=3D=3D=3Db?d=3Dd[c]?d[c]:d[c]=3D{}:d[c]=3Db},ba=3Dfunction(a,b,e){return=
+ a.call.apply(a.bind,arguments)},ca=3Dfunction(a,b,e){if(!a)throw =
+Error();if(2<arguments.length){var =
+d=3DArray.prototype.slice.call(arguments,2);return function(){var =
+c=3DArray.prototype.slice.call(arguments);Array.prototype.unshift.apply(c=
+,d);return a.apply(b,c)}}return function(){return a.apply(b,=0A=
+arguments)}},p=3Dfunction(a,b,e){p=3DFunction.prototype.bind&&-1!=3DFunct=
+ion.prototype.bind.toString().indexOf("native code")?ba:ca;return =
+p.apply(null,arguments)},da=3Dfunction(a,b){var =
+e=3DArray.prototype.slice.call(arguments,1);return function(){var =
+b=3DArray.prototype.slice.call(arguments);b.unshift.apply(b,e);return =
+a.apply(this,b)}};var r=3D(new Date).getTime();var =
+u=3Dfunction(a){a=3DparseFloat(a);return =
+isNaN(a)||1<a||0>a?0:a},w=3Dfunction(a){return/^true$/.test(a)?!0:!1},ea=3D=
+/^([\w-]+\.)*([\w-]{2,})(\:[0-9]+)?$/,x=3Dfunction(a,b){if(!a)return =
+b;var e=3Da.match(ea);return e?e[0]:b};var =
+fa=3Du("0.15"),ga=3Du("0.005"),ha=3Du("1.0"),ia=3Du("0.005"),ja=3Du("0.00=
+1"),ka=3Du("0.0");var =
+la=3Dw("false"),ma=3Dw("false"),na=3Dw("false"),oa=3Dw("false");var =
+pa=3Dfunction(){return x("","pagead2.googlesyndication.com")};var =
+qa=3D/&/g,ra=3D/</g,sa=3D/>/g,ta=3D/\"/g,A=3D{"\x00":"\\0","\b":"\\b","\f=
+":"\\f","\n":"\\n","\r":"\\r","\t":"\\t","\x0B":"\\x0B",'"':'\\"',"\\":"\=
+\\\"},D=3D{"'":"\\'"};var =
+E=3Ddocument,F=3Dwindow,G,ua=3Dnull,H=3DE.getElementsByTagName("script");=
+H&&H.length&&(ua=3DH[H.length-1].parentNode);G=3Dua;pa();var =
+I=3Dfunction(a,b){for(var e in =
+a)Object.prototype.hasOwnProperty.call(a,e)&&b.call(null,a[e],e,a)},J=3Df=
+unction(a){return!!a&&"function"=3D=3Dtypeof =
+a&&!!a.call},va=3Dfunction(a,b){if(!(2>arguments.length))for(var =
+e=3D1,d=3Darguments.length;e<d;++e)a.push(arguments[e])};function =
+wa(a,b){K(a,"load",b)}=0A=
+var K=3Dfunction(a,b,e,d){return =
+a.addEventListener?(a.addEventListener(b,e,d||!1),!0):a.attachEvent?(a.at=
+tachEvent("on"+b,e),!0):!1},L=3Dfunction(a,b,e,d){e=3Dp(d,e);return =
+K(a,b,e,void =
+0)?e:null},M=3Dfunction(a,b,e){a.removeEventListener?a.removeEventListene=
+r(b,e,!1):a.detachEvent&&a.detachEvent("on"+b,e)},xa=3Dfunction(){var =
+a=3Dwindow;"google_onload_fired"in =
+a||(a.google_onload_fired=3D!1,wa(a,function(){a.google_onload_fired=3D!0=
+}))},N=3Dfunction(a,b){if(!(1E-4>Math.random())){var =
+e=3DMath.random();if(e<b)return a[Math.floor(e/=0A=
+b*a.length)]}return =
+null},O=3Dfunction(a){try{return!!a.location.href||""=3D=3D=3Da.location.=
+href}catch(b){return!1}};var ya=3D/MSIE =
+[2-7]|PlayStation|Gecko\/20090226|Android 2\./i,za=3D/Android|Opera/;var =
+P=3Dnull,Aa=3Dfunction(){if(!P){for(var =
+a=3Dwindow,b=3Da,e=3D0;a!=3Da.parent;)if(a=3Da.parent,e++,O(a))b=3Da;else=
+ break;P=3Db}return P};var =
+Q=3Dfunction(a,b,e){e||(e=3Doa?"https":"http");return[e,"://",a,b].join("=
+")};var Ba=3Dfunction(){},R=3Dfunction(a,b,e){switch(typeof b){case =
+"string":Ca(b,e);break;case =
+"number":e.push(isFinite(b)&&!isNaN(b)?b:"null");break;case =
+"boolean":e.push(b);break;case "undefined":e.push("null");break;case =
+"object":if(null=3D=3Db){e.push("null");break}if(b instanceof Array){var =
+d=3Db.length;e.push("[");for(var =
+c=3D"",f=3D0;f<d;f++)e.push(c),R(a,b[f],e),c=3D",";e.push("]");break}e.pu=
+sh("{");d=3D"";for(c in =
+b)b.hasOwnProperty(c)&&(f=3Db[c],"function"!=3Dtypeof =
+f&&(e.push(d),Ca(c,e),e.push(":"),R(a,f,e),d=3D=0A=
+","));e.push("}");break;case "function":break;default:throw =
+Error("Unknown type: "+typeof =
+b);}},S=3D{'"':'\\"',"\\":"\\\\","/":"\\/","\b":"\\b","\f":"\\f","\n":"\\=
+n","\r":"\\r","\t":"\\t","\x0B":"\\u000b"},Da=3D/\uffff/.test("\uffff")?/=
+[\\\"\x00-\x1f\x7f-\uffff]/g:/[\\\"\x00-\x1f\x7f-\xff]/g,Ca=3Dfunction(a,=
+b){b.push('"');b.push(a.replace(Da,function(a){if(a in S)return S[a];var =
+b=3Da.charCodeAt(0),c=3D"\\u";16>b?c+=3D"000":256>b?c+=3D"00":4096>b&&(c+=
+=3D"0");return S[a]=3Dc+b.toString(16)}));b.push('"')};var =
+T=3D"google_ad_block google_ad_channel google_ad_client google_ad_format =
+google_ad_height google_ad_host google_ad_host_channel =
+google_ad_host_tier_id google_ad_output google_ad_override =
+google_ad_region google_ad_section google_ad_slot google_ad_type =
+google_ad_width google_adtest google_allow_expandable_ads =
+google_alternate_ad_url google_alternate_color =
+google_analytics_domain_name google_analytics_uacct google_bid =
+google_city google_color_bg google_color_border google_color_line =
+google_color_link google_color_text google_color_url google_container_id =
+google_contents google_country google_cpm google_ctr_threshold =
+google_cust_age google_cust_ch google_cust_criteria google_cust_gender =
+google_cust_id google_cust_interests google_cust_job google_cust_l =
+google_cust_lh google_cust_u_url google_disable_video_autoplay google_ed =
+google_eids google_enable_ose google_encoding =
+google_floating_ad_position google_font_face google_font_size =
+google_frame_id google_gl google_hints google_image_size google_kw =
+google_kw_type google_lact google_language google_loeid =
+google_max_num_ads google_max_radlink_len google_mtl google_num_radlinks =
+google_num_radlinks_per_unit google_num_slots_to_rotate =
+google_only_ads_with_video google_only_pyv_ads =
+google_only_userchoice_ads google_override_format google_page_url =
+google_previous_watch google_previous_searches google_referrer_url =
+google_region google_reuse_colors google_rl_dest_url google_rl_filtering =
+google_rl_mode google_rt google_safe google_sc_id google_scs google_sui =
+google_skip google_tag_info google_targeting google_tdsma google_tfs =
+google_tl google_ui_features google_ui_version google_video_doc_id =
+google_video_product_type google_video_url_to_fetch google_with_pyv_ads =
+google_yt_pt google_yt_up".split(" "),=0A=
+Ea=3Dfunction(a){a.google_page_url&&(a.google_page_url=3DString(a.google_=
+page_url));var b=3D[];I(a,function(a,d){if(null!=3Da){var c;try{var =
+f=3D[];R(new =
+Ba,a,f);c=3Df.join("")}catch(m){}c&&va(b,d,"=3D",c,";")}});return =
+b.join("")};var =
+Fa=3D/\.((google(|groups|mail|images|print))|gmail)\./,Ga=3Dfunction(a){v=
+ar =
+b=3DFa.test(a.location.host);return!(!a.postMessage||!a.localStorage||!a.=
+JSON||b)};var =
+U=3Dfunction(a){this.b=3Da;a.google_iframe_oncopy||(a.google_iframe_oncop=
+y=3D{handlers:{}});this.l=3Da.google_iframe_oncopy},Ha;var V=3D"var =
+i=3Dthis.id,s=3Dwindow.google_iframe_oncopy,H=3Ds&&s.handlers,h=3DH&&H[i]=
+,w=3Dthis.contentWindow,d;try{d=3Dw.document}catch(e){}if(h&&d&&(!d.body|=
+|!d.body.firstChild)){if(h.call){setTimeout(h,0)}else =
+if(h.match){w.location.replace(h)}}";=0A=
+/[&<>\"]/.test(V)&&(-1!=3DV.indexOf("&")&&(V=3DV.replace(qa,"&amp;")),-1!=
+=3DV.indexOf("<")&&(V=3DV.replace(ra,"&lt;")),-1!=3DV.indexOf(">")&&(V=3D=
+V.replace(sa,"&gt;")),-1!=3DV.indexOf('"')&&(V=3DV.replace(ta,"&quot;")))=
+;Ha=3DV;U.prototype.set=3Dfunction(a,b){this.l.handlers[a]=3Db;this.b.add=
+EventListener&&!/MSIE/.test(navigator.userAgent)&&this.b.addEventListener=
+("load",p(this.m,this,a),!1)};U.prototype.m=3Dfunction(a){a=3Dthis.b.docu=
+ment.getElementById(a);var =
+b=3Da.contentWindow.document;if(a.onload&&b&&(!b.body||!b.body.firstChild=
+))a.onload()};var =
+Ia=3D{client:"google_ad_client",format:"google_ad_format",slotname:"googl=
+e_ad_slot",output:"google_ad_output",ad_type:"google_ad_type"},W=3Dfuncti=
+on(a,b,e,d){var =
+c=3Dp(b,n,a);b=3Dp(b,n,"onerror::"+a);a=3Dwindow.onerror;window.onerror=3D=
+b;try{e()}catch(f){e=3Df.toString();if(f.stack){b=3Df.stack;var =
+m=3De;try{-1=3D=3Db.indexOf(m)&&(b=3Dm+"\n"+b);for(var =
+h;b!=3Dh;)h=3Db,b=3Db.replace(/((https?:\/..*\/)[^\/:]*:\d+(?:.|\n)*)\2/,=
+"$1");e=3Db.replace(/\n =
+*/g,"\n")}catch(g){e=3Dm}}h=3D"";f.fileName&&(h=3Df.fileName);b=3D-1;f.li=
+neNumber&&(b=3D=0A=
+f.lineNumber);var l;o:{try{l=3Dd?d():"";break =
+o}catch(k){}l=3D""}if(!c(e,h,b,l))throw =
+f;}window.onerror=3Da};aa("google_protectAndRun",W);=0A=
+var =
+X=3Dfunction(a,b,e,d,c){a=3D{jscb:la?1:0,jscd:ma?1:0,context:a,msg:b.subs=
+tring(0,512),eid:c&&c.substring(0,40),file:e,line:d.toString(),url:E.URL.=
+substring(0,512),ref:E.referrer.substring(0,512)};Ja(a);0.01>Math.random(=
+)&&(a=3D"/pagead/gen_204?id=3Djserror"+Ka(a),a=3DQ(x("","pagead2.googlesy=
+ndication.com"),a),a=3Da.substring(0,2E3),F.google_image_requests||(F.goo=
+gle_image_requests=3D[]),b=3DF.document.createElement("img"),b.src=3Da,F.=
+google_image_requests.push(b));return!na};=0A=
+aa("google_handleError",X);var Ja=3Dfunction(a){var =
+b=3Da||{};I(Ia,function(a,d){b[d]=3DF[a]})},La=3Dfunction(a,b){return =
+da(W,a,X,b,void 0)},Ka=3Dfunction(a){var =
+b=3D"";I(a,function(a,d){if(0=3D=3D=3Da||a)b+=3D"&"+d+"=3D"+("function"=3D=
+=3Dtypeof encodeURIComponent?encodeURIComponent(a):escape(a))});return =
+b};var =
+Y,Z=3Dfunction(a){this.c=3D[];this.b=3Da||window;this.a=3D0;this.d=3Dnull=
+},Ma=3Dfunction(a,b){this.k=3Da;this.win=3Db};Z.prototype.o=3Dfunction(a,=
+b){0!=3Dthis.a||0!=3Dthis.c.length||b&&b!=3Dwindow?this.g(a,b):(this.a=3D=
+2,this.f(new =
+Ma(a,window)))};Z.prototype.g=3Dfunction(a,b){this.c.push(new =
+Ma(a,b||this.b));Na(this)};Z.prototype.p=3Dfunction(a){this.a=3D1;if(a){v=
+ar =
+b=3DLa("sjr::timeout",p(this.e,this));this.d=3Dthis.b.setTimeout(b,a)}};=0A=
+Z.prototype.e=3Dfunction(){1=3D=3Dthis.a&&(null!=3Dthis.d&&(this.b.clearT=
+imeout(this.d),this.d=3Dnull),this.a=3D0);Na(this)};Z.prototype.q=3Dfunct=
+ion(){return!0};Z.prototype.nq=3DZ.prototype.o;Z.prototype.nqa=3DZ.protot=
+ype.g;Z.prototype.al=3DZ.prototype.p;Z.prototype.rl=3DZ.prototype.e;Z.pro=
+totype.sz=3DZ.prototype.q;var Na=3Dfunction(a){var =
+b=3DLa("sjr::tryrun",p(a.n,a));a.b.setTimeout(b,0)};=0A=
+Z.prototype.n=3Dfunction(){if(0=3D=3Dthis.a&&this.c.length){var =
+a=3Dthis.c.shift();this.a=3D2;var =
+b=3DLa("sjr::run",p(this.f,this,a));a.win.setTimeout(b,0);Na(this)}};Z.pr=
+ototype.f=3Dfunction(a){this.a=3D0;a.k()};=0A=
+var Oa=3Dfunction(a){try{return =
+a.sz()}catch(b){return!1}},Pa=3Dfunction(a){return!!a&&("object"=3D=3Dtyp=
+eof a||"function"=3D=3Dtypeof =
+a)&&Oa(a)&&J(a.nq)&&J(a.nqa)&&J(a.al)&&J(a.rl)},Qa=3Dfunction(){if(Y&&Oa(=
+Y))return Y;var a=3DAa(),b=3Da.google_jobrunner;return =
+Pa(b)?Y=3Db:a.google_jobrunner=3DY=3Dnew =
+Z(a)},Ra=3Dfunction(a,b){Qa().nq(a,b)},Sa=3Dfunction(a,b){Qa().nqa(a,b)};=
+var Ta=3Dfunction(){var a=3D"script";return["<",a,' =
+src=3D"',Q(pa(),"/pagead/js/r20130801/r20130206/show_ads_impl.js",""),'">=
+</',a,">"].join("")},Ua=3Dfunction(a,b,e,d){return function(){var =
+c=3D!1;d&&Qa().al(3E4);try{if(O(a.document.getElementById(b).contentWindo=
+w)){var =
+f=3Da.document.getElementById(b).contentWindow,m=3Df.document;m.body&&m.b=
+ody.firstChild||(m.open(),=0A=
+f.google_async_iframe_close=3D!0,m.write(e))}else{var =
+h=3Da.document.getElementById(b).contentWindow,g;f=3De;f=3DString(f);if(f=
+.quote)g=3Df.quote();else{for(var m=3D['"'],l=3D0;l<f.length;l++){var =
+k=3Df.charAt(l),B=3Dk.charCodeAt(0),y=3Dm,z=3Dl+1,t;if(!(t=3DA[k])){var =
+C;if(31<B&&127>B)C=3Dk;else{var s=3Dk;if(s in D)C=3DD[s];else if(s in =
+A)C=3DD[s]=3DA[s];else{var =
+q=3Ds,v=3Ds.charCodeAt(0);if(31<v&&127>v)q=3Ds;else{if(256>v){if(q=3D"\\x=
+",16>v||256<v)q+=3D"0"}else =
+q=3D"\\u",4096>v&&(q+=3D"0");q+=3Dv.toString(16).toUpperCase()}C=3DD[s]=3D=
+q}}t=3DC}y[z]=3Dt}m.push('"');=0A=
+g=3Dm.join("")}h.location.replace("javascript:"+g)}c=3D!0}catch(cb){h=3DA=
+a().google_jobrunner,Pa(h)&&h.rl()}c&&(new =
+U(a)).set(b,Ua(a,b,e,!1))}},Va=3Dfunction(a){var =
+b=3D["<iframe"];I(a,function(a,d){b.push(" =
+"+d+'=3D"'+(null=3D=3Da?"":a)+'"')});b.push("></iframe>");return =
+b.join("")},Wa=3Dfunction(a,b,e,d){d=3Dd?'"':"";var =
+c=3Dd+"0"+d;a.width=3Dd+b+d;a.height=3Dd+e+d;a.frameborder=3Dc;a.marginwi=
+dth=3Dc;a.marginheight=3Dc;a.vspace=3Dc;a.hspace=3Dc;a.allowtransparency=3D=
+d+"true"+d;a.scrolling=3Dd+"no"+d},Xa=3DMath.floor(1E6*Math.random()),=0A=
+Ya=3Dfunction(a){for(var =
+b=3Da.data.split("\n"),e=3D{},d=3D0;d<b.length;d++){var =
+c=3Db[d].indexOf("=3D");-1!=3Dc&&(e[b[d].substr(0,c)]=3Db[d].substr(c+1))=
+}b=3De[3];if(e[1]=3D=3DXa&&(window.google_top_js_status=3D4,a.source=3D=3D=
+top&&0=3D=3Db.indexOf(a.origin)&&(window.google_top_values=3De,window.goo=
+gle_top_js_status=3D5),window.google_top_js_callbacks)){for(a=3D0;a<windo=
+w.google_top_js_callbacks.length;a++)window.google_top_js_callbacks[a]();=
+window.google_top_js_callbacks.length=3D0}};var =
+Za=3Dfunction(a,b,e){this.x=3Da;this.y=3Db;this.z=3De},$a=3Dfunction(a,b,=
+e){this.beta=3Da;this.gamma=3Db;this.alpha=3De},ab=3Dfunction(a,b){this.d=
+eviceAccelerationWithGravity=3Dthis.deviceAccelerationWithoutGravity=3Dnu=
+ll;this.deviceMotionEventCallbacks=3D[];this.deviceOrientation=3Dnull;thi=
+s.deviceOrientationEventCallbacks=3D[];this.isDeviceOrientationEventListe=
+nerRegistered=3Dthis.isDeviceMotionEventListenerRegistered=3Dthis.didDevi=
+ceOrientationCallbacksTimeoutExpire=3Dthis.didDeviceMotionCallbacksTimeou=
+tExpire=3D!1;this.registeredMozOrientationEventListener=3D=0A=
+this.registeredDeviceOrientationEventListener=3Dthis.registeredDeviceMoti=
+onEventListener=3Dnull;this.sensorsExperiment=3Db;this.stopTimeStamp=3Dth=
+is.startTimeStamp=3Dnull;this.win=3Da},$=3Dfunction(a){this.a=3Da;this.a.=
+win.DeviceOrientationEvent?(this.a.registeredDeviceOrientationEventListen=
+er=3DL(this.a.win,"deviceorientation",this,this.i),this.a.isDeviceOrienta=
+tionEventListenerRegistered=3D!0):this.a.win.OrientationEvent&&(this.a.re=
+gisteredMozOrientationEventListener=3DL(this.a.win,"MozOrientation",this,=
+this.j),this.a.isDeviceOrientationEventListenerRegistered=3D=0A=
+!0);this.a.win.DeviceMotionEvent&&(this.a.registeredDeviceMotionEventList=
+ener=3DL(this.a.win,"devicemotion",this,this.h),this.a.isDeviceMotionEven=
+tListenerRegistered=3D!0)};=0A=
+$.prototype.h=3Dfunction(a){a.acceleration&&(this.a.deviceAccelerationWit=
+houtGravity=3Dnew =
+Za(a.acceleration.x,a.acceleration.y,a.acceleration.z));a.accelerationInc=
+ludingGravity&&(this.a.deviceAccelerationWithGravity=3Dnew =
+Za(a.accelerationIncludingGravity.x,a.accelerationIncludingGravity.y,a.ac=
+celerationIncludingGravity.z));bb(this.a.deviceMotionEventCallbacks);M(th=
+is.a.win,"devicemotion",this.a.registeredDeviceMotionEventListener)};=0A=
+$.prototype.i=3Dfunction(a){this.a.deviceOrientation=3Dnew =
+$a(a.beta,a.gamma,a.alpha);bb(this.a.deviceOrientationEventCallbacks);M(t=
+his.a.win,"deviceorientation",this.a.registeredDeviceOrientationEventList=
+ener)};$.prototype.j=3Dfunction(a){this.a.deviceOrientation=3Dnew =
+$a(-90*a.y,90*a.x,null);bb(this.a.deviceOrientationEventCallbacks);M(this=
+.a.win,"MozOrientation",this.a.registeredMozOrientationEventListener)};va=
+r bb=3Dfunction(a){for(var =
+b=3D0;b<a.length;++b)a[b]();a.length=3D0};W("sa::main",X,function(){xa();=
+if(!window.google_top_experiment){var =
+a=3Dwindow;if(2!=3D=3D(a.top=3D=3Da?0:O(a.top)?1:2))window.google_top_js_=
+status=3D0;else if(top.postMessage){var =
+b;try{b=3DF.top.frames.google_top_static_frame?!0:!1}catch(e){b=3D!1}if(b=
+){if(window.google_top_experiment=3DN(["jp_c","jp_zl"],fa)||"jp_wfpmr","j=
+p_zl"=3D=3D=3Dwindow.google_top_experiment||"jp_wfpmr"=3D=3D=3Dwindow.goo=
+gle_top_experiment){K(window,"message",Ya);window.google_top_js_status=3D=
+3;a=3D{0:"google_loc_request",1:Xa};b=3D[];for(var d in a)b.push(d+=0A=
+"=3D"+a[d]);top.postMessage(b.join("\n"),"*")}}else =
+window.google_top_js_status=3D2}else window.google_top_js_status=3D1}var =
+c;c=3Dc||window;d=3D!1;c.navigator&&c.navigator.userAgent&&(c=3Dc.navigat=
+or.userAgent,d=3D0!=3Dc.indexOf("Opera")&&-1!=3Dc.indexOf("WebKit")&&-1!=3D=
+c.indexOf("Mobile"));if(d){c=3Dwindow;if(d=3D!/Android/.test(c.navigator.=
+userAgent))d=3Dc.google_unique_id,d=3D0=3D=3D("number"=3D=3Dtypeof =
+d?d:0)&&!c.google_sensors;d&&(d=3Dnull,c.google_top_experiment&&"jp_c"!=3D=
+c.google_top_experiment||(d=3DN(["ds_c","ds_zl","ds_wfea"],=0A=
+ka)),d&&(c.google_sensors=3Dnew ab(c,d),"ds_c"!=3Dd&&new =
+$(c.google_sensors)))}c=3Dwindow.google_ad_output;void =
+0!=3D=3Dwindow.google_always_use_delayed_impressions_experiment||c&&"html=
+"!=3Dc||(window.google_always_use_delayed_impressions_experiment=3DN(["C"=
+,"E"],ja));(c=3D!1=3D=3D=3Dwindow.google_enable_async)||(c=3Dnavigator.us=
+erAgent,ya.test(c)?c=3D!1:(void =
+0!=3D=3Dwindow.google_async_for_oa_experiment||(!za.test(navigator.userAg=
+ent)||ya.test(navigator.userAgent))||(window.google_async_for_oa_experime=
+nt=3DN(["C","E"],ia)),c=3D=0A=
+za.test(c)?"E"=3D=3D=3Dwindow.google_async_for_oa_experiment:!0),c=3D!c||=
+window.google_container_id||window.google_ad_output&&"html"!=3Dwindow.goo=
+gle_ad_output);if(c)window.google_loader_used=3D"sb",window.google_start_=
+time=3Dr,document.write(Ta());else{c=3Dwindow;c.google_unique_id?++c.goog=
+le_unique_id:c.google_unique_id=3D1;c=3Dwindow;var =
+f=3D{};d=3D0;for(a=3DT.length;d<a;d++)b=3DT[d],null!=3Dc[b]&&(f[b]=3Dc[b]=
+);f.google_loader_used=3D"sa";d=3D0;for(a=3DT.length;d<a;d++)c[T[d]]=3Dnu=
+ll;d=3Df.google_ad_width;a=3Df.google_ad_height;b=3D{};Wa(b,=0A=
+d,a,!0);b.onload=3D'"'+Ha+'"';for(var =
+m,h=3Dc.document,g=3Db.id,l=3D0;!g||h.getElementById(g);)g=3D"aswift_"+l+=
++;b.id=3Dg;b.name=3Dg;var =
+l=3Df.google_ad_width,k=3Df.google_ad_height,g=3D["<iframe"];for(m in =
+b)b.hasOwnProperty(m)&&va(g,m+"=3D"+b[m]);g.push('style=3D"left:0;positio=
+n:absolute;top:0;"');g.push("></iframe>");m=3D"border:none;height:"+k+"px=
+;margin:0;padding:0;position:relative;visibility:visible;width:"+l+"px";h=
+.write(['<ins style=3D"display:inline-table;',m,'"><ins =
+id=3D"',b.id+"_anchor",'" style=3D"display:block;',=0A=
+m,'">',g.join(" =
+"),"</ins></ins>"].join(""));m=3Db.id;b=3DEa(f);g=3Df.google_ad_output;(h=
+=3Df.google_ad_format)||"html"!=3Dg&&null!=3Dg||(h=3Df.google_ad_width+"x=
+"+f.google_ad_height);g=3D!f.google_ad_slot||f.google_override_format||"a=
+a"=3D=3Df.google_loader_used;h=3Dh&&g?h.toLowerCase():"";f.google_ad_form=
+at=3Dh;h=3Df||F;h=3D[h.google_ad_slot,h.google_ad_format,h.google_ad_type=
+,h.google_ad_width,h.google_ad_height];if(G){if(G){g=3D[];l=3D0;for(k=3DG=
+;k&&25>l;k=3Dk.parentNode,++l)g.push(9!=3Dk.nodeType&&k.id||"");g=3Dg.joi=
+n()}else g=3D"";=0A=
+g&&h.push(g)}g=3D0;if(h)if(h=3Dh.join(":"),g=3Dh.length,0=3D=3Dg)g=3D0;el=
+se{l=3D305419896;for(k=3D0;k<g;k++)l^=3D(l<<5)+(l>>2)+h.charCodeAt(k)&429=
+4967295;g=3D0<l?l:4294967296+l}h=3Dg.toString();g=3DGa(c);l=3D3=3D=3D({vi=
+sible:1,hidden:2,prerender:3,preview:4}[c.document.webkitVisibilityState|=
+|c.document.mozVisibilityState||c.document.visibilityState||""]||0);g&&(!=
+l&&void =
+0=3D=3D=3Dc.google_ad_handling_experiment)&&(c.google_ad_handling_experim=
+ent=3DN(["XN","EI"],ga)||N(["PC"],ha));g=3Dc.google_ad_handling_experimen=
+t?String(c.google_ad_handling_experiment):=0A=
+null;if(Ga(c)&&1=3D=3Dc.google_unique_id&&"XN"!=3Dg){l=3D"zrt_ads_frame"+=
+c.google_unique_id;f=3Df.google_page_url;if(!f){e:{var =
+f=3Dc.document,k=3Dd||c.google_ad_width,B=3Da||c.google_ad_height;if(c.to=
+p=3D=3Dc)f=3D!1;else{var y=3Df.documentElement;if(k&&B){var =
+z=3D1,t=3D1;c.innerHeight?(z=3Dc.innerWidth,t=3Dc.innerHeight):y&&y.clien=
+tHeight?(z=3Dy.clientWidth,t=3Dy.clientHeight):f.body&&(z=3Df.body.client=
+Width,t=3Df.body.clientHeight);if(t>2*B||z>2*k){f=3D!1;break =
+e}}f=3D!0}}f=3Df?c.document.referrer:c.document.URL}k=3DencodeURIComponen=
+t(f);f=3Dnull;=0A=
+"PC"!=3Dg&&"EI"!=3Dg||(f=3D("PC"=3D=3Dg?"K":"I")+"-"+(k+"/"+h+"/"+c.googl=
+e_unique_id));k=3D{};Wa(k,d,a,!1);k.style=3D"display:none";d=3Df;k.id=3Dl=
+;k.name=3Dl;k.src=3DQ(x("","googleads.g.doubleclick.net"),["/pagead/html/=
+r20130801/r20130206/zrt_lookup.html",d?"#"+encodeURIComponent(d):""].join=
+(""));d=3DVa(k)}else d=3Dnull;a=3D(new =
+Date).getTime();f=3Dc.google_top_experiment;l=3Dc.google_async_for_oa_exp=
+eriment;k=3Dc.google_always_use_delayed_impressions_experiment;=0A=
+d=3D["<!doctype =
+html><html><body>",d,"<script>",b,"google_show_ads_impl=3Dtrue;google_uni=
+que_id=3D",c.google_unique_id,';google_async_iframe_id=3D"',m,'";google_a=
+d_unit_key=3D"',h,'";google_start_time=3D',r,";",f?'google_top_experiment=
+=3D"'+f+'";':"",g?'google_ad_handling_experiment=3D"'+g+'";':"",l?'google=
+_async_for_oa_experiment=3D"'+l+'";':"",k?'google_always_use_delayed_impr=
+essions_experiment=3D"'+k+'";':"","google_bpp=3D",a>r?a-r:1,";\x3c/script=
+>",Ta(),"</body></html>"].join("");(c.document.getElementById(m)?Ra:Sa)(U=
+a(c,=0A=
+m,d,!0))}});})();=0A=
+
+------=_NextPart_000_0000_01CE936A.4815D590--
