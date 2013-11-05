@@ -1,3 +1,5 @@
+# This is new line to test git changes
+
 # OK - final READY TO USE
 # Working. 
 # Seems to be the best because all .o are stored at the same root dir, and this is easy to remove it.
