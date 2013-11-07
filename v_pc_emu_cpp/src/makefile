@@ -26,7 +26,7 @@ EXECUTABLE := v_pc.exe
 all : v_pc.exe
 
 v_pc.exe : CommStack.o BMP085Sensor.o Timer.o Display.o DisplaySDL.o Keybd.o Sound.o v_pc.o 
-#	$(CXX) -o v_pc.exe CommStack.o BMP085Sensor.o Timer.o Display.o DisplaySDL.o Keybd.o Sound.o v_pc.o
+	$(CXX) -o v_pc.exe CommStack.o BMP085Sensor.o Timer.o Display.o DisplaySDL.o Keybd.o Sound.o v_pc.o
 
 
 clean : 
