@@ -5,7 +5,7 @@
 # Check is it working under linux 
 
 ## headers subdirs
-IDIRS = -I./comm -I./sensor -I./sys -I./timer -I./ui/display -I./ui/kbd -I./ui/sound
+IDIRS = -I./commstack -I./sensor -I./sys -I./timer -I./ui/display -I./ui/kbd -I./ui/sound
 
 ##CC=gcc   
 ##CFLAGS=-c -Wall $(IDIRS) 
@@ -17,7 +17,7 @@ LDFLAGS=
 LDLIBS=
 
 ## all source subdirs for linker and compilator
-VPATH = comm sensor sys timer ui/display ui/kbd ui/sound
+VPATH = commstack sensor sys timer ui/display ui/kbd ui/sound
 
 EXECUTABLE := v_pc.exe
 
