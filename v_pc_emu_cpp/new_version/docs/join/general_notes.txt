@@ -1,0 +1,78 @@
+
+0#
+Desing patterns.
+http://www.sourcetricks.com/2008/05/c-observer-patterm.html#.V3NxVI38Jix
+
+
+1#
+std::vector<int> a{1,2,4} --->A (Aggregate Initialization)
+
+This is initializer-list initialization, not aggregate, because vector is not
+an aggregate — its data is stored on the heap.
+You need to have #include <initializer_list> for it to work, although that
+header is typically included from <vector>.
+
+
+2#
+http://en.cppreference.com/w/cpp/container/array
+
+
+3#
+Timer:
+
+SDL:
+http://lazyfoo.net/tutorials/SDL/45_timer_callbacks/index.php
+
+
+http://stackoverflow.com/questions/11865460/issue-when-scheduling-tasks-using-clock-function/11866539#11866539
+
+http://www.drdobbs.com/cpp/timed-callbacks-in-c/184408856
+
+http://codereview.stackexchange.com/questions/40473/portable-periodic-one-shot-timer-implementation
+
+http://stackoverflow.com/questions/11850717/how-to-time-event-in-c
+
+http://stackoverflow.com/questions/14650885/how-to-create-timer-events-using-c-11
+
+http://stackoverflow.com/questions/12904098/c-implementing-timed-callback-function
+
+Do you want it to by asynchronous so that the callback gets executed when 25 miliseconds are over without blocking the main executing thread? If so, you can execute the callback in a separate thread from the timer / timed callback function you implement. 
+
+If you do not use multithreading, then your main or the calling function of callfunctiontimed(25, funcName); would block while you run a sleep / usleep. It is your choice now as to what behavior you want to implement. 
+
+The real solution would not be as simple as to multithread or not. There are things like, how do you keep different timers/callbacks information considering the function can be called multiple times with different timeouts and functions. 
+
+One way to do it, would be like this:
+1.Create a sorted list of timers/callbacks, sorted based on the time to expire. 
+2.Have on main thread and one thread which looks at callbacks/timers, call it timer thread.
+3.When a new callback is added, add it in the sorted list. 
+4.The timer thread could be initialized to wait for the least amount of time in the sorted list, or the head. Re-initialize it as new callbacks get added. There would be some math and conditions to take care of. 
+5.
+As the timer thread is done sleeping, it removes and looks at head of the list and executes the function pointer in a new thread. Timer thread is re-initialized with sleep time on the new head of the list. 
+main() {
+        //spawn a timer thread with pthread create 
+
+    callfunctiontimed(25, test); 
+    callfunctiontimed(35, show);
+    callfunctiontimed(4,  print);
+}
+
+callfunctionTImed(int time, (func*)function, void*data) //
+{
+    //add information to sorted list of timer and callbacks
+    //re-initialize sleep_time for timer thread if needed. 
+    return. 
+}
+timerThread() {
+    while(1){
+     sleep(sleep_time);
+     //look at head of timer list, remove it, call function in a new thread   
+     //adjust sleep time as per new head     
+    }
+}
+
+
+Hopefully this gives an idea of what I meant, although this is not perfect and has several problems. 
+
+
+

@@ -1,0 +1,17 @@
+
+1#
+Add CJunit.
+
+2#
+Add parser to get a data from the real logs.
+
+3#
+Add tool to create curve of the altitude by hand, and export it
+as a set of pairs time/altitude.
+This data will be than read as an input at the test module.
+Use FLTK library.
+
+4#
+Add MCAL layer.
+
+

@@ -1,0 +1,14 @@
+
+
+1#
+std::vector<int> a{1,2,4} --->A (Aggregate Initialization)
+
+This is initializer-list initialization, not aggregate, because vector is not
+an aggregate — its data is stored on the heap.
+You need to have #include <initializer_list> for it to work, although that
+header is typically included from <vector>.
+
+
+2#
+http://en.cppreference.com/w/cpp/container/array
+

@@ -1,0 +1,17 @@
+# Orig by eclipse
+#
+#CXXFLAGS =	-O2 -g -Wall -fmessage-length=0
+#
+#OBJS =		vcpp_make.o
+#
+#LIBS =
+#
+#TARGET =	vcpp_make.exe
+#
+#$(TARGET):	$(OBJS)
+#	$(CXX) -o $(TARGET) $(OBJS) $(LIBS)
+#
+#all:	$(TARGET)
+#
+#clean:
+#	rm -f $(OBJS) $(TARGET)

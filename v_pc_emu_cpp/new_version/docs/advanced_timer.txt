@@ -1,0 +1,7 @@
+
+https://wiki.libsdl.org/SDL_AddTimer
+
+http://lazyfoo.net/tutorials/SDL/23_advanced_timers/index.php
+http://lazyfoo.net/tutorials/SDL/22_timing/index.php
+
+
